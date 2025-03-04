@@ -1,4 +1,4 @@
-package com.example.thanksdiary.domain.base;
+package com.example.thanksdiary.domain.common;
 
 import java.time.LocalDateTime;
 
