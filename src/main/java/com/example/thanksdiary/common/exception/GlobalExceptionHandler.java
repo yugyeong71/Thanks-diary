@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 
 	/**
 	 * RequestBody Validation 에러
-	 * HttpStatus 417
+	 * HttpStatus 400
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
