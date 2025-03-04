@@ -1,6 +1,7 @@
 package com.example.thanksdiary.common.exception;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -20,20 +21,29 @@ public class GlobalExceptionHandler {
 	 * HttpStatus 400
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.EXPECTATION_FAILED)
 	public ErrorResponse validationException(MethodArgumentNotValidException e) {
 		BindingResult bindingResult = e.getBindingResult();
+
+		FieldError fieldError = null;
 
 		// @NotBlank, @NotNull, @Size, @Pattern 어노테이션 순으로 유효성 검사 체크
 		List<String> errorCase = List.of("NotBlank", "NotNull", "Size", "Pattern");
 
-		String message = bindingResult.getFieldErrors().stream()
-			.filter(error -> errorCase.contains(error.getCode()))
-			.findFirst()
-			.map(FieldError::getDefaultMessage)
-			.orElse("요청 값의 형식이 올바르지 않습니다.");
+		for (String errorCode : errorCase) {
+			fieldError = bindingResult.getFieldErrors().stream()
+				.filter(error -> Objects.equals(error.getCode(), errorCode))
+				.findFirst()
+				.orElse(null);
 
-		return ErrorResponse.of(HttpStatus.BAD_REQUEST, message);
+			if (fieldError != null) {
+				break;
+			}
+		}
+
+		String message = (fieldError != null) ? fieldError.getDefaultMessage() : bindingResult.getFieldError().getField() + "의 형식이 올바르지 않습니다.";
+
+		return ErrorResponse.of(HttpStatus.EXPECTATION_FAILED, message);
 	}
 
 
