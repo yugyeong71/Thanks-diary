@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.3'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 group = 'com.example'
@@ -14,6 +15,7 @@ java {
 }
 
 configurations {
+    asciidoctorExtensions
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -21,6 +23,41 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+    originalHtml = file('build/docs/asciidoc')
+    docsDir = file('build/resources/main/static/docs')
+}
+
+asciidoctor {
+    dependsOn test
+    configurations 'asciidoctorExtensions'
+    inputs.dir snippetsDir
+    baseDirFollowsSourceFile()
+}
+
+asciidoctor.doFirst {
+    delete docsDir
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('copyDocument', Copy) {
+    dependsOn asciidoctor
+    from originalHtml
+    into file(docsDir)
+}
+
+resolveMainClassName {
+    dependsOn copyDocument
+}
+
+bootJar {
+    dependsOn copyDocument
 }
 
 dependencies {
@@ -36,8 +73,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
 
-tasks.named('test') {
-    useJUnitPlatform()
+    // Spring Rest docs
+    testImplementation('junit:junit:4.13.1')
+    testImplementation 'org.springframework.security:spring-security-test'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }

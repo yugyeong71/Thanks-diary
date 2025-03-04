@@ -1,0 +1,23 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+ifndef::doc[]
+:doc: src/docs/asciidoc
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+:operation-http-request-title: Example Request
+:operation-http-response-title: Example Response
+ifndef::snippets-custom[]
+:snippets-custom: ../../../src/docs/custom
+
+
+
+[[title]]
+= 감사일기 APP API 문서
+
+include::common.adoc[]
