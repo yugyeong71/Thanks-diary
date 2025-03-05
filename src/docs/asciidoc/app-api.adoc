@@ -39,3 +39,23 @@ include::{snippets}/user/email/check/request-fields.adoc[]
 === Response
 include::{snippets}/user/email/check/response-fields.adoc[]
 include::{snippets}/user/email/check/response-body.adoc[]
+
+[[emailSend]]
+== 2. 이메일 인증 코드 요청
+*이메일 인증 코드 요청 API*
+
+: 인증 코드 만료 시간은 5분입니다.
+
+*[ 이메일 인증 코드 요청 실패 ]*::
+
+- 이메일 미입력 : `"이메일은 필수입니다."` (code : 417)
+- 올바르지 않은 이메일 형식 : `"올바르지 않은 이메일입니다."` (code : 417)
+- 메일 전송 실패 : `"메일 전송에 실패했습니다."` (code : 400)
+
+=== Http
+include::{snippets}/user/email/send/http-request.adoc[]
+=== Request
+include::{snippets}/user/email/send/request-fields.adoc[]
+=== Response
+include::{snippets}/user/email/send/response-fields.adoc[]
+include::{snippets}/user/email/send/response-body.adoc[]
