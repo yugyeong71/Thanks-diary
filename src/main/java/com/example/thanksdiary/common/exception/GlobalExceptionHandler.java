@@ -56,6 +56,16 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
+	 * 인증 에러
+	 * HttpStatus 401
+	 */
+	@ExceptionHandler(UnauthorizedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ErrorResponse UnauthorizedException(UnauthorizedException e) {
+		return ErrorResponse.of(HttpStatus.UNAUTHORIZED, e.getMessage());
+	}
+
+	/**
 	 * RequestParam Validation 에러
 	 * HttpStatus 417
 	 */

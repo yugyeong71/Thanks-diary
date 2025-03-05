@@ -27,6 +27,7 @@ import com.example.thanksdiary.controller.user.EmailController;
 import com.example.thanksdiary.dto.common.SuccessResponse;
 import com.example.thanksdiary.dto.user.request.EmailCheckRequest;
 import com.example.thanksdiary.dto.user.request.SendVerificationCodeRequest;
+import com.example.thanksdiary.dto.user.request.VerifyEmailCodeRequest;
 import com.example.thanksdiary.service.user.EmailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -120,6 +121,45 @@ public class EmailControllerTest extends ControllerTest {
 			));
 
 		verify(emailService).sendVerificationCode(any(SendVerificationCodeRequest.class));
+	}
+
+	@Test
+	@DisplayName("이메일 인증 코드 검증")
+	public void verifyEmailCode() throws Exception {
+
+		// given
+		VerifyEmailCodeRequest verifyEmailCodeRequest = VerifyEmailCodeRequest.builder()
+			.email("thanks123@gmail.com")
+			.code("123456")
+			.build();
+
+		given(emailService.verifyEmailCode(any(VerifyEmailCodeRequest.class))).willReturn(new SuccessResponse());
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.post("/email/verify")
+				.content(objectMapper.writeValueAsString(verifyEmailCodeRequest))
+				.contentType(MediaType.APPLICATION_JSON)
+		);
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("user/email/verify",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				requestFields(
+					fieldWithPath("email").type(JsonFieldType.STRING).description("사용자 이메일"),
+					fieldWithPath("code").type(JsonFieldType.STRING).description("이메일 인증 코드")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지")
+				)
+			));
+
+		verify(emailService).verifyEmailCode(any(VerifyEmailCodeRequest.class));
 	}
 
 }

@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.thanksdiary.common.exception.AlreadyDataException;
 import com.example.thanksdiary.common.exception.BadRequestException;
+import com.example.thanksdiary.common.exception.UnauthorizedException;
 import com.example.thanksdiary.dao.user.UserRepository;
 import com.example.thanksdiary.dto.common.SuccessResponse;
 import com.example.thanksdiary.dto.user.request.EmailCheckRequest;
 import com.example.thanksdiary.dto.user.request.SendVerificationCodeRequest;
+import com.example.thanksdiary.dto.user.request.VerifyEmailCodeRequest;
 import com.example.thanksdiary.service.common.RedisService;
 
 import jakarta.mail.Message;
@@ -103,5 +105,23 @@ public class EmailService {
 		}
 
 		return key.toString();
+	}
+
+	/**
+	 * 이메일 인증 코드 검증
+	 */
+	@Transactional(readOnly = true)
+	public SuccessResponse verifyEmailCode(VerifyEmailCodeRequest verifyEmailCodeRequest) {
+		String code = redisService.getData(verifyEmailCodeRequest.getEmail());
+
+		if (code == null) {
+			throw new UnauthorizedException("인증 코드가 만료되었습니다.");
+		}
+
+		if (code.equals(verifyEmailCodeRequest.getCode())) {
+			return new SuccessResponse();
+		} else {
+			throw new UnauthorizedException("인증 코드가 일치하지 않습니다.");
+		}
 	}
 }
