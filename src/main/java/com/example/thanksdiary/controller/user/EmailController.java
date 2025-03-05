@@ -15,7 +15,6 @@ import com.example.thanksdiary.service.user.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/email")
