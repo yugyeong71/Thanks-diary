@@ -9,7 +9,9 @@ public enum ResponseMessage {
 
 	SUCCESS_MESSAGE("API Call successful", "정상"),
 
-	ALREADY_EXIST_DATA_MESSAGE("Already Exist Data", "이미 존재하는 데이터");
+	ALREADY_EXIST_DATA_MESSAGE("Already Exist Data", "이미 존재하는 데이터"),
+
+	BAD_REQUEST_MESSAGE("Bad Request", "잘못된 요청");
 
 	private final String message;
 

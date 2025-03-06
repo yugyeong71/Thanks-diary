@@ -39,3 +39,47 @@ include::{snippets}/user/email/check/request-fields.adoc[]
 === Response
 include::{snippets}/user/email/check/response-fields.adoc[]
 include::{snippets}/user/email/check/response-body.adoc[]
+
+[[emailSend]]
+== 2. 이메일 인증 코드 요청
+*이메일 인증 코드 요청 API*
+
+: 인증 코드 만료 시간은 5분입니다.
+
+*[ 이메일 인증 코드 요청 실패 ]*::
+
+- 이메일 미입력 : `"이메일은 필수입니다."` (code : 417)
+- 올바르지 않은 이메일 형식 : `"올바르지 않은 이메일입니다."` (code : 417)
+- 메일 전송 실패 : `"메일 전송에 실패했습니다."` (code : 400)
+
+=== Http
+include::{snippets}/user/email/send/http-request.adoc[]
+=== Request
+include::{snippets}/user/email/send/request-fields.adoc[]
+=== Response
+include::{snippets}/user/email/send/response-fields.adoc[]
+include::{snippets}/user/email/send/response-body.adoc[]
+
+[[emailVerify]]
+== 3. 이메일 인증 코드 검증
+*이메일 인증 코드 검증 API*
+
+: 인증 코드가 만료되기 전에 잘못된 인증 코드를 요청하면, `인증 코드 불일치` 오류가 발생합니다.
+
+인증 코드가 만료된 후에는 인증 코드의 일치 여부와 관계없이, `인증 코드 만료` 오류가 발생합니다.
+
+*[ 이메일 인증 코드 검증 실패 ]*::
+
+- 이메일 미입력 : `"이메일은 필수입니다."` (code : 417)
+- 올바르지 않은 이메일 형식 : `"올바르지 않은 이메일입니다."` (code : 417)
+- 인증 코드 미입력 : `"인증 코드는 필수입니다."` (code : 417)
+- 인증 코드 만료 : `"인증 코드가 만료되었습니다."` (code : 401)
+- 인증 코드 불일치 : `"인증 코드가 일치하지 않습니다."` (code : 401)
+
+=== Http
+include::{snippets}/user/email/verify/http-request.adoc[]
+=== Request
+include::{snippets}/user/email/verify/request-fields.adoc[]
+=== Response
+include::{snippets}/user/email/verify/response-fields.adoc[]
+include::{snippets}/user/email/verify/response-body.adoc[]
