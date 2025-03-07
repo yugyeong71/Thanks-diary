@@ -35,7 +35,7 @@ include::common.adoc[]
 === Http
 include::{snippets}/user/email/check/http-request.adoc[]
 === Request
-include::{snippets}/user/email/check/request-fields.adoc[]
+include::{snippets}/user/email/check/query-parameters.adoc[]
 === Response
 include::{snippets}/user/email/check/response-fields.adoc[]
 include::{snippets}/user/email/check/response-body.adoc[]

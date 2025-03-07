@@ -13,7 +13,6 @@ import com.example.thanksdiary.common.exception.BadRequestException;
 import com.example.thanksdiary.common.exception.UnauthorizedException;
 import com.example.thanksdiary.dao.user.UserRepository;
 import com.example.thanksdiary.dto.common.SuccessResponse;
-import com.example.thanksdiary.dto.user.request.EmailCheckRequest;
 import com.example.thanksdiary.dto.user.request.SendVerificationCodeRequest;
 import com.example.thanksdiary.dto.user.request.VerifyEmailCodeRequest;
 import com.example.thanksdiary.service.common.RedisService;
@@ -40,12 +39,10 @@ public class EmailService {
 	 * 이메일 중복 확인
 	 */
 	@Transactional(readOnly = true)
-	public SuccessResponse emailCheck(EmailCheckRequest emailCheckRequest) {
-		if (userRepository.findByEmail(emailCheckRequest.getEmail()).isPresent()){
+	public void emailCheck(String email) {
+		if (userRepository.findByEmail(email).isPresent()){
 			throw new AlreadyDataException("이미 사용 중인 이메일입니다.");
 		}
-
-		return new SuccessResponse();
 	}
 
 	/**
