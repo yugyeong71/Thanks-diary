@@ -66,6 +66,16 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
+	 * 권한 에러
+	 * HttpStatus 403
+	 */
+	@ExceptionHandler(TokenExpiredException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ErrorResponse TokenExpiredException(TokenExpiredException e) {
+		return ErrorResponse.of(HttpStatus.FORBIDDEN, ResponseMessage.FORBIDDEN_MESSAGE.getMessage());
+	}
+
+	/**
 	 * RequestParam Validation 에러
 	 * HttpStatus 417
 	 */
