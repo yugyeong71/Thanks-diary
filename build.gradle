@@ -86,4 +86,10 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+    // JDK 11 이상 Xml Bind
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+
 }

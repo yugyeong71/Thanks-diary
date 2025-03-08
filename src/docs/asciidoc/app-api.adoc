@@ -28,14 +28,14 @@ include::common.adoc[]
 
 *[ 이메일 중복 확인 실패 ]*::
 
-- 이미 존재하는 이메일 : `"일치하는 정보가 없습니다. 다시 확인해 주세요."` (code : 422)
+- 이미 존재하는 이메일 : `"이미 사용 중인 이메일입니다."` (code : 422)
 - 이메일 미입력 : `"이메일은 필수입니다."` (code : 417)
 - 올바르지 않은 이메일 형식 : `"올바르지 않은 이메일입니다."` (code : 417)
 
 === Http
 include::{snippets}/user/email/check/http-request.adoc[]
 === Request
-include::{snippets}/user/email/check/request-fields.adoc[]
+include::{snippets}/user/email/check/query-parameters.adoc[]
 === Response
 include::{snippets}/user/email/check/response-fields.adoc[]
 include::{snippets}/user/email/check/response-body.adoc[]
@@ -83,3 +83,24 @@ include::{snippets}/user/email/verify/request-fields.adoc[]
 === Response
 include::{snippets}/user/email/verify/response-fields.adoc[]
 include::{snippets}/user/email/verify/response-body.adoc[]
+
+[[userSignUp]]
+== 4. 사용자 회원가입
+*사용자 회원가입 API*
+
+*[ 사용자 회원가입 실패 ]*::
+
+- 이미 존재하는 이메일 : `"이미 사용 중인 이메일입니다."` (code : 422)
+- 이메일 미입력 : `"이메일은 필수입니다."` (code : 417)
+- 올바르지 않은 이메일 형식 : `"올바르지 않은 이메일입니다."` (code : 417)
+- 인증 코드 미입력 : `"인증 코드는 필수입니다."` (code : 417)
+- 인증 코드 불일치 : `"인증 코드가 일치하지 않습니다."` (code : 401)
+- 인증 코드가 존재하지 않는 경우 : `"인증 코드가 존재하지 않습니다."` (code : 401)
+
+=== Http
+include::{snippets}/user/auth/signup/http-request.adoc[]
+=== Request
+include::{snippets}/user/auth/signup/request-fields.adoc[]
+=== Response
+include::{snippets}/user/auth/signup/response-fields.adoc[]
+include::{snippets}/user/auth/signup/response-body.adoc[]

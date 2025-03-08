@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,6 @@ import org.springframework.web.context.WebApplicationContext;
 import com.example.thanksdiary.common.ControllerTest;
 import com.example.thanksdiary.controller.user.EmailController;
 import com.example.thanksdiary.dto.common.SuccessResponse;
-import com.example.thanksdiary.dto.user.request.EmailCheckRequest;
 import com.example.thanksdiary.dto.user.request.SendVerificationCodeRequest;
 import com.example.thanksdiary.dto.user.request.VerifyEmailCodeRequest;
 import com.example.thanksdiary.service.user.EmailService;
@@ -54,17 +54,13 @@ public class EmailControllerTest extends ControllerTest {
 	public void emailCheck() throws Exception {
 
 		// given
-		EmailCheckRequest emailCheckRequest = EmailCheckRequest.builder()
-			.email("thanks123@gmail.com")
-			.build();
-
-		given(emailService.emailCheck(any(EmailCheckRequest.class))).willReturn(new SuccessResponse());
+		doNothing().when(emailService).emailCheck(any(String.class));
 
 		// when
 		ResultActions resultActions = mockMvc.perform(
-			RestDocumentationRequestBuilders.post("/email/check")
-				.content(objectMapper.writeValueAsString(emailCheckRequest))
+			RestDocumentationRequestBuilders.get("/email/check?email={email}", "thanks123@gmail.com")
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 		);
 
 		// then
@@ -74,8 +70,8 @@ public class EmailControllerTest extends ControllerTest {
 			.andDo(document("user/email/check",
 				getDocumentRequest(),
 				getDocumentResponse(),
-				requestFields(
-					fieldWithPath("email").type(JsonFieldType.STRING).description("사용자 이메일")
+				queryParameters(
+					parameterWithName("email").description("사용자 이메일")
 				),
 				responseFields(
 					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
@@ -83,7 +79,7 @@ public class EmailControllerTest extends ControllerTest {
 				)
 			));
 
-		verify(emailService).emailCheck(any(EmailCheckRequest.class));
+		verify(emailService).emailCheck(any(String.class));
 	}
 
 	@Test

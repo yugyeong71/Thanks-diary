@@ -33,4 +33,12 @@ public class User extends BaseEntity {
 	@Column(nullable = true)
 	private LocalDateTime lastLoginDate;
 
+	/**
+	 * RefreshToken, 마지막 로그인 일자 업데이트
+	 */
+	public void updateLogin(String refreshToken) {
+		this.refreshToken = refreshToken;
+		this.lastLoginDate = LocalDateTime.now();
+	}
+
 }
