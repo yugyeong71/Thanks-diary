@@ -11,7 +11,9 @@ import com.example.thanksdiary.common.jwt.JwtTokenUtil;
 import com.example.thanksdiary.dao.user.UserRepository;
 import com.example.thanksdiary.domain.common.enums.TokenType;
 import com.example.thanksdiary.domain.user.User;
+import com.example.thanksdiary.dto.user.request.UserLoginRequest;
 import com.example.thanksdiary.dto.user.request.UserSignUpRequest;
+import com.example.thanksdiary.dto.user.response.UserLoginResponse;
 import com.example.thanksdiary.dto.user.response.UserSignUpResponse;
 import com.example.thanksdiary.service.common.RedisService;
 
@@ -62,7 +64,31 @@ public class UserAuthService {
 			.id(userId)
 			.email(user.getEmail())
 			.accessToken(accessToken)
-			.refreshToken(user.getRefreshToken())
+			.refreshToken(refreshToken)
+			.build();
+	}
+
+	/**
+	 * 사용자 로그인
+	 */
+	@Transactional
+	public UserLoginResponse userLogin(UserLoginRequest userLoginRequest) {
+		User user = userRepository.findByEmail(userLoginRequest.getEmail()).orElseThrow(() -> new UnauthorizedException("일치하는 정보가 없습니다.\n이메일과 비밀번호를 다시 확인해 주세요."));
+
+		if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())){
+			throw new UnauthorizedException("일치하는 정보가 없습니다.\n이메일과 비밀번호를 다시 확인해 주세요.");
+		}
+
+		String accessToken = jwtTokenUtil.createToken(user, TokenType.ACCESS_TOKEN);
+		String refreshToken = jwtTokenUtil.createToken(user, TokenType.REFRESH_TOKEN);
+
+		user.updateLogin(refreshToken);
+
+		return UserLoginResponse.builder()
+			.id(user.getId())
+			.email(user.getEmail())
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
 			.build();
 	}
 
