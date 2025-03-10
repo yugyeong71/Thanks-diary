@@ -1,22 +1,28 @@
 package com.example.thanksdiary.service.user;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.thanksdiary.common.exception.TokenExpiredException;
 import com.example.thanksdiary.common.exception.UnauthorizedException;
 import com.example.thanksdiary.common.jwt.JwtTokenUtil;
 import com.example.thanksdiary.dao.user.UserRepository;
 import com.example.thanksdiary.domain.common.enums.TokenType;
+import com.example.thanksdiary.domain.common.enums.UserRole;
 import com.example.thanksdiary.domain.user.User;
 import com.example.thanksdiary.dto.user.request.UserLoginRequest;
 import com.example.thanksdiary.dto.user.request.UserSignUpRequest;
+import com.example.thanksdiary.dto.user.response.AccessTokenRefreshResponse;
 import com.example.thanksdiary.dto.user.response.UserLoginResponse;
 import com.example.thanksdiary.dto.user.response.UserSignUpResponse;
 import com.example.thanksdiary.service.common.RedisService;
 
+import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -90,6 +96,36 @@ public class UserAuthService {
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
+	}
+
+	/**
+	 * AccessToken 재발급
+	 */
+	@Transactional(readOnly = true)
+	public AccessTokenRefreshResponse accessTokenRefresh(HttpServletRequest httpServletRequest) {
+		String refreshToken = jwtTokenUtil.getRefreshToken(httpServletRequest);
+
+		if (jwtTokenUtil.isExpired(refreshToken, TokenType.REFRESH_TOKEN)) {
+			throw new TokenExpiredException();
+		}
+
+		Long id = jwtTokenUtil.getUserId(refreshToken, TokenType.REFRESH_TOKEN);
+
+		UserRole userRole = jwtTokenUtil.getRoles(refreshToken, TokenType.REFRESH_TOKEN);
+
+		if (Objects.requireNonNull(userRole) == UserRole.ROLE_USER) {
+			User user = userRepository.findById(id).orElseThrow(TokenExpiredException::new);
+
+			if (StringUtils.isBlank(user.getRefreshToken()) || !user.getRefreshToken().equals(refreshToken)) {
+				throw new UnauthorizedException("유효하지 않은 Refresh Token입니다.");
+			}
+
+			return AccessTokenRefreshResponse.builder()
+				.accessToken(jwtTokenUtil.createToken(user, TokenType.ACCESS_TOKEN))
+				.build();
+		}
+
+		throw new TokenExpiredException();
 	}
 
 }
