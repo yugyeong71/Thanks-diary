@@ -10,7 +10,7 @@ import com.example.thanksdiary.dao.user.UserRepository;
 import com.example.thanksdiary.domain.common.enums.TokenType;
 import com.example.thanksdiary.domain.common.enums.UserRole;
 import com.example.thanksdiary.domain.user.User;
-import com.example.thanksdiary.dto.common.SuccessResponse;
+import com.example.thanksdiary.dto.user.response.UserAutoLoginResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +47,25 @@ public class UserService {
 	public void userRevoke(HttpServletRequest httpServletRequest) {
 		User user = this.getUser(httpServletRequest);
 		user.revoke();
+	}
+
+	/**
+	 * 사용자 자동 로그인
+	 */
+	@Transactional
+	public UserAutoLoginResponse userAutoLogin(HttpServletRequest httpServletRequest) {
+		User user = this.getUser(httpServletRequest);
+
+		String accessToken = jwtTokenUtil.createToken(user, TokenType.ACCESS_TOKEN);
+		String refreshToken = jwtTokenUtil.createToken(user, TokenType.REFRESH_TOKEN);
+
+		user.updateLogin(refreshToken);
+
+		return UserAutoLoginResponse.builder()
+			.id(user.getId())
+			.email(user.getEmail())
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.build();
 	}
 }

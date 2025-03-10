@@ -1,8 +1,8 @@
 package com.example.thanksdiary.user;
 
 import static com.example.thanksdiary.common.ApiDocumentUtils.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.example.thanksdiary.common.ControllerTest;
 import com.example.thanksdiary.controller.user.UserController;
+import com.example.thanksdiary.dto.user.response.UserAutoLoginResponse;
 import com.example.thanksdiary.service.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -78,6 +79,49 @@ public class UserControllerTest extends ControllerTest {
 			));
 
 		verify(userService).userRevoke(any(HttpServletRequest.class));
+	}
+
+	@Test
+	@DisplayName("사용자 자동 로그인")
+	public void userAutoLogin() throws Exception {
+
+		// given
+		UserAutoLoginResponse userAutoLoginResponse = UserAutoLoginResponse.builder()
+			.id(1L)
+			.email("thanks123@gmail.com")
+			.accessToken("AccessToken")
+			.refreshToken("RefreshToken")
+			.build();
+
+		given(userService.userAutoLogin(any(HttpServletRequest.class))).willReturn(userAutoLoginResponse);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.put("/user/auto-login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.AUTHORIZATION, "감사일기.Access.Token")
+				.with(user("user").roles("USER"))
+		);
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("user/auto-login",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+					fieldWithPath("response").type(JsonFieldType.OBJECT).description("결과 데이터"),
+					fieldWithPath("response.id").type(JsonFieldType.NUMBER).description("사용자 고유 번호"),
+					fieldWithPath("response.email").type(JsonFieldType.STRING).description("사용자 이메일"),
+					fieldWithPath("response.accessToken").type(JsonFieldType.STRING).description("Access Token"),
+					fieldWithPath("response.refreshToken").type(JsonFieldType.STRING).description("Refresh Token")
+				)
+			));
+
+		verify(userService).userAutoLogin(any(HttpServletRequest.class));
 	}
 
 }

@@ -127,7 +127,7 @@ include::{snippets}/user/auth/login/response-body.adoc[]
 
 *[ 사용자 회원탈퇴 실패 ]*::
 
-- 권한이 없는 사용 : `"권한이 없는 사용자입니다."` (code : 401)
+- 권한이 없는 사용자 : `"권한이 없는 사용자입니다."` (code : 401)
 - 존재하지 않는 사용자 : `"존재하지 않는 사용자입니다."` (code : 404)
 
 === Http
@@ -135,3 +135,18 @@ include::{snippets}/user/revoke/http-request.adoc[]
 === Response
 include::{snippets}/user/revoke/response-fields.adoc[]
 include::{snippets}/user/revoke/response-body.adoc[]
+
+[[userAutoLogin]]
+== 7. 사용자 자동 로그인
+*사용자 자동 로그인 API*
+
+*[ 사용자 자동 로그인 실패 ]*::
+
+- 권한이 없는 사용 : `"권한이 없는 사용자입니다."` (code : 401)
+- 존재하지 않는 사용자 : `"존재하지 않는 사용자입니다."` (code : 404)
+
+=== Http
+include::{snippets}/user/auto-login/http-request.adoc[]
+=== Response
+include::{snippets}/user/auto-login/response-fields.adoc[]
+include::{snippets}/user/auto-login/response-body.adoc[]
