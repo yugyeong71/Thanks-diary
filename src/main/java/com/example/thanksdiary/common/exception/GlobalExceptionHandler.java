@@ -76,6 +76,16 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
+	 * 데이터 조회 에러
+	 * HttpStatus 404
+	 */
+	@ExceptionHandler(NotFoundDataException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ErrorResponse NotFoundDataException(NotFoundDataException e) {
+		return ErrorResponse.of(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, e.getMessage());
+	}
+
+	/**
 	 * RequestParam Validation 에러
 	 * HttpStatus 417
 	 */

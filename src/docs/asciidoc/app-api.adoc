@@ -120,3 +120,18 @@ include::{snippets}/user/auth/login/request-fields.adoc[]
 === Response
 include::{snippets}/user/auth/login/response-fields.adoc[]
 include::{snippets}/user/auth/login/response-body.adoc[]
+
+[[userRevoke]]
+== 6. 사용자 회원탈퇴
+*사용자 회원탈퇴 API*
+
+*[ 사용자 회원탈퇴 실패 ]*::
+
+- 권한이 없는 사용 : `"권한이 없는 사용자입니다."` (code : 401)
+- 존재하지 않는 사용자 : `"존재하지 않는 사용자입니다."` (code : 404)
+
+=== Http
+include::{snippets}/user/revoke/http-request.adoc[]
+=== Response
+include::{snippets}/user/revoke/response-fields.adoc[]
+include::{snippets}/user/revoke/response-body.adoc[]
