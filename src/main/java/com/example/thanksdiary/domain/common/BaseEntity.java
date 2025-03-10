@@ -34,4 +34,11 @@ public class BaseEntity {
 	@Column(nullable = true)
 	private LocalDateTime deletedAt;
 
+	/**
+	 *  회원탈퇴
+	 */
+	public void revoke() {
+		this.deletedAt = LocalDateTime.now();
+	}
+
 }
