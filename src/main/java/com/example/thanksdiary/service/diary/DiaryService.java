@@ -34,13 +34,14 @@ public class DiaryService {
 		Diary diary = diaryRepository.save(Diary.builder()
 				.userId(user.getId())
 				.content(simpleDiaryCreateRequest.getContent())
+				.recordDate(simpleDiaryCreateRequest.getDate())
 				.type(DiaryType.SIMPLE)
 			.build());
 
 		return SimpleDiaryCreateResponse.builder()
 			.id(diary.getId())
 			.content(diary.getContent())
-			.createdAt(diary.getCreatedAt())
+			.date(diary.getRecordDate())
 			.build();
 	}
 

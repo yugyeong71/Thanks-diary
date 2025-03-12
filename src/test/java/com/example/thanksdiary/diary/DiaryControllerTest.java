@@ -10,7 +10,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,12 +63,13 @@ public class DiaryControllerTest extends ControllerTest {
 		// given
 		SimpleDiaryCreateRequest simpleDiaryCreateRequest = SimpleDiaryCreateRequest.builder()
 			.content("햇살이 창문을 따뜻하게 비추고, 부드러운 바람이 커튼을 살며시 흔든다.")
+			.date(LocalDate.now())
 			.build();
 
 		SimpleDiaryCreateResponse simpleDiaryCreateResponse = SimpleDiaryCreateResponse.builder()
 			.id(1L)
 			.content("햇살이 창문을 따뜻하게 비추고, 부드러운 바람이 커튼을 살며시 흔든다.")
-			.createdAt(LocalDateTime.now())
+			.date(LocalDate.now())
 			.build();
 
 		given(diaryService.createSimpleDiary(any(HttpServletRequest.class), any(SimpleDiaryCreateRequest.class))).willReturn(simpleDiaryCreateResponse);
@@ -90,13 +90,17 @@ public class DiaryControllerTest extends ControllerTest {
 			.andDo(document("diary/simple/create",
 				getDocumentRequest(),
 				getDocumentResponse(),
+				requestFields(
+					fieldWithPath("content").type(JsonFieldType.STRING).description("일기 내용"),
+					fieldWithPath("date").type(JsonFieldType.STRING).attributes(localDateFormat()).description("일기 작성일")
+				),
 				responseFields(
 					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
 					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
 					fieldWithPath("response").type(JsonFieldType.OBJECT).description("결과 데이터"),
 					fieldWithPath("response.id").type(JsonFieldType.NUMBER).description("일기 고유 번호"),
 					fieldWithPath("response.content").type(JsonFieldType.STRING).description("일기 내용"),
-					fieldWithPath("response.createdAt").type(JsonFieldType.STRING).attributes(localDateTimeFormat()).description("일기 작성일")
+					fieldWithPath("response.date").type(JsonFieldType.STRING).attributes(localDateFormat()).description("일기 작성일")
 				)
 			));
 

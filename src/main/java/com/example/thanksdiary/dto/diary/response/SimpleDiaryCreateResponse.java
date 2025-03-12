@@ -1,6 +1,6 @@
 package com.example.thanksdiary.dto.diary.response;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -17,7 +17,7 @@ public class SimpleDiaryCreateResponse {
 
 	private String content;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-	private LocalDateTime createdAt;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-d", timezone = "Asia/Seoul")
+	private LocalDate date;
 
 }
