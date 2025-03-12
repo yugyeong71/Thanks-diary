@@ -92,4 +92,7 @@ dependencies {
     // JDK 11 이상 Xml Bind
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 
+    // Apache Commons Lang
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
 }
