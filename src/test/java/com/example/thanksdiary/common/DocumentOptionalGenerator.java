@@ -13,4 +13,8 @@ public class DocumentOptionalGenerator {
 	public static Attributes.Attribute localDateTimeFormat() {
 		return setFormat("yyyy-MM-dd HH:mm:ss");
 	}
+
+	public static Attributes.Attribute localDateFormat() {
+		return setFormat("yyyy-MM-dd");
+	}
 }

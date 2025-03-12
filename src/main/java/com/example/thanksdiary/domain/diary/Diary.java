@@ -1,11 +1,15 @@
 package com.example.thanksdiary.domain.diary;
 
+import java.time.LocalDate;
+
 import org.hibernate.annotations.SQLRestriction;
 
+import com.example.thanksdiary.common.converter.EmptyStringToNullConverter;
 import com.example.thanksdiary.domain.common.BaseEntity;
 import com.example.thanksdiary.domain.diary.enums.DiaryType;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,6 +30,7 @@ public class Diary extends BaseEntity {
 	@Column(nullable = false)
 	private Long userId;
 
+	@Convert(converter = EmptyStringToNullConverter.class)
 	@Column(nullable = true)
 	private String title;
 
@@ -36,5 +41,8 @@ public class Diary extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private DiaryType type;
+
+	@Column(nullable = false)
+	private LocalDate recordDate;
 
 }

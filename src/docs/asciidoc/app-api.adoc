@@ -183,3 +183,22 @@ include::{snippets}/diary/simple/create/response-fields.adoc[]
 === Response
 include::{snippets}/diary/simple/create/response-fields.adoc[]
 include::{snippets}/diary/simple/create/response-body.adoc[]
+
+[[createDetailedDiary]]
+== 10. 일기 작성 - 자세한
+*자세한 일기 작성 API*
+
+*[ 자세한 일기 작성 실패 ]*::
+
+- 권한이 없는 사용자 : `"권한이 없는 사용자입니다."` (code : 401)
+- 존재하지 않는 사용자 : `"존재하지 않는 사용자입니다."` (code : 404)
+- 일기 내용 미입력 : `"일기 내용은 필수입니다."` (code : 417)
+- 일기 작성일 미입력 : `"일기 작성일은 필수입니다."` (code : 417)
+
+=== Http
+include::{snippets}/diary/detailed/create/http-request.adoc[]
+=== Request
+include::{snippets}/diary/detailed/create/response-fields.adoc[]
+=== Response
+include::{snippets}/diary/detailed/create/response-fields.adoc[]
+include::{snippets}/diary/detailed/create/response-body.adoc[]
