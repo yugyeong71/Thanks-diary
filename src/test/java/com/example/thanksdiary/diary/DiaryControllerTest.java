@@ -6,10 +6,13 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +32,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.example.thanksdiary.common.ControllerTest;
 import com.example.thanksdiary.controller.diary.DiaryController;
+import com.example.thanksdiary.dto.diary.common.DateDetailedDiaryDto;
+import com.example.thanksdiary.dto.diary.common.DateSimpleDiaryDto;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
+import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.service.diary.DiaryService;
@@ -160,6 +166,73 @@ public class DiaryControllerTest extends ControllerTest {
 			));
 
 		verify(diaryService).createDetailedDiary(any(HttpServletRequest.class), any(DetailedDiaryCreateRequest.class));
+	}
+
+	@Test
+	@DisplayName("날짜별 일기 조회")
+	public void getDiaryByDate() throws Exception {
+
+		// given
+		List<DateDetailedDiaryDto> detailedDiaryList = Arrays.asList(
+			DateDetailedDiaryDto.builder()
+				.id(3L)
+				.title(null)
+				.content("오늘은 놀이공원에 갔다. 사람이 별로 없어서 놀이기구를 7개나 탔다. 감사하다!")
+				.build(),
+			DateDetailedDiaryDto.builder()
+				.id(5L)
+				.title("나는 날씨요정")
+				.content("오늘은 제주 여행 첫째날이다. 비 소식이 있어서 우산을 챙기려 했는데 숙소에서 나오자마자 비가 그쳤다! 나는 날씨요정인가보다. 감사하다!")
+				.build()
+		);
+
+		List<DateSimpleDiaryDto> simpleDiaryList = Arrays.asList(
+			DateSimpleDiaryDto.builder()
+				.id(4L)
+				.content("오늘은 제주 엄청난 맛집에 갔다. 기본 웨이팅 1시간인데, 이게 뭐람! 딱 한자리가 남아있어서 바로 들어갔다. 럭키비키쟈냐...")
+				.build()
+		);
+
+		DateDiaryResponse dateDiaryResponse = DateDiaryResponse.builder()
+			.detailedDiaryList(detailedDiaryList)
+			.simpleDiaryList(simpleDiaryList)
+			.build();
+
+		given(diaryService.getDiaryByDate(any(HttpServletRequest.class), any(LocalDate.class))).willReturn(dateDiaryResponse);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.get("/diary/date?date={date}", LocalDate.now())
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.AUTHORIZATION, "감사일기.Access.Token")
+				.with(user("user").roles("USER"))
+		);
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("diary/date",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				queryParameters(
+					parameterWithName("date").attributes(localDateFormat()).description("일기 작성일 (조회 날짜)")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+					fieldWithPath("response").type(JsonFieldType.OBJECT).description("결과 데이터"),
+					fieldWithPath("response.detailedDiaryList[]").type(JsonFieldType.ARRAY).description("사용자 목록"),
+					fieldWithPath("response.detailedDiaryList[].id").type(JsonFieldType.NUMBER).description("일기 고유 번호"),
+					fieldWithPath("response.detailedDiaryList[].title").type(JsonFieldType.STRING).optional().description("일기 제목"),
+					fieldWithPath("response.detailedDiaryList[].content").type(JsonFieldType.STRING).description("일기 내용"),
+					fieldWithPath("response.simpleDiaryList[]").type(JsonFieldType.ARRAY).description("사용자 목록"),
+					fieldWithPath("response.simpleDiaryList[].id").type(JsonFieldType.NUMBER).description("일기 고유 번호"),
+					fieldWithPath("response.simpleDiaryList[].content").type(JsonFieldType.STRING).description("일기 내용")
+				)
+			));
+
+		verify(diaryService).getDiaryByDate(any(HttpServletRequest.class), any(LocalDate.class));
 	}
 
 }
