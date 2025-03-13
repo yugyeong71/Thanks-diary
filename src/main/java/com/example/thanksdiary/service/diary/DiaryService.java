@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.thanksdiary.common.exception.BadRequestException;
+import com.example.thanksdiary.common.exception.ForbiddenException;
+import com.example.thanksdiary.common.exception.NotFoundDataException;
 import com.example.thanksdiary.dao.diary.DiaryRepository;
 import com.example.thanksdiary.domain.diary.Diary;
 import com.example.thanksdiary.domain.diary.enums.DiaryType;
@@ -19,6 +22,7 @@ import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
+import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.service.user.UserService;
 
@@ -109,6 +113,31 @@ public class DiaryService {
 		return DateDiaryResponse.builder()
 			.detailedDiaryList(detailedDiaryList)
 			.simpleDiaryList(simpleDiaryList)
+			.build();
+	}
+
+	/**
+	 * 자세한 일기 상세 조회
+	 */
+	@Transactional(readOnly = true)
+	public DetailedDiaryResponse getDetailedDiary(HttpServletRequest httpServletRequest, Long id) {
+		User user = userService.getUser(httpServletRequest);
+
+		Diary diary = diaryRepository.findById(id).orElseThrow(() -> new NotFoundDataException("존재하지 않는 일기입니다."));
+
+		if (!user.getId().equals(diary.getUserId())) {
+			throw new ForbiddenException("해당 일기에 대한 접근 권한이 없습니다.");
+		}
+
+		if (diary.getType() != DiaryType.DETAILED) {
+			throw new BadRequestException("자세한 일기만 조회 가능합니다.");
+		}
+
+		return DetailedDiaryResponse.builder()
+			.date(diary.getRecordDate())
+			.dayOfWeek(diary.getRecordDate().getDayOfWeek().toString())
+			.title(diary.getTitle())
+			.content(diary.getContent())
 			.build();
 	}
 }

@@ -38,6 +38,7 @@ import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
+import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.service.diary.DiaryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -233,6 +234,52 @@ public class DiaryControllerTest extends ControllerTest {
 			));
 
 		verify(diaryService).getDiaryByDate(any(HttpServletRequest.class), any(LocalDate.class));
+	}
+
+	@Test
+	@DisplayName("자세한 일기 상세 조회")
+	public void getDetailedDiary() throws Exception {
+
+		// given
+		DetailedDiaryResponse detailedDiaryResponse = DetailedDiaryResponse.builder()
+			.date(LocalDate.now())
+			.dayOfWeek(LocalDate.now().getDayOfWeek().toString())
+			.title("나홀로 영화관에")
+			.content("오늘은 인생 처음으로 혼영을 했다! 혼자 영화관에 가면 심심할 것 같았는데 은근 재밌었다. 영화관에 사람도 없어서 대관한 느낌이었다. 오늘도 감사한 하루!")
+			.build();
+
+		given(diaryService.getDetailedDiary(any(HttpServletRequest.class), any(Long.class))).willReturn(detailedDiaryResponse);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.get("/diary/detailed?id={id}", 1L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.AUTHORIZATION, "감사일기.Access.Token")
+				.with(user("user").roles("USER"))
+		);
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("diary/detailed/get",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				queryParameters(
+					parameterWithName("id").description("일기 고유 번호")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+					fieldWithPath("response").type(JsonFieldType.OBJECT).description("결과 데이터"),
+					fieldWithPath("response.date").type(JsonFieldType.STRING).attributes(localDateFormat()).description("일기 작성일"),
+					fieldWithPath("response.dayOfWeek").type(JsonFieldType.STRING).attributes(dayOfWeekFormat()).description("일기 작성 요일"),
+					fieldWithPath("response.title").type(JsonFieldType.STRING).optional().description("일기 제목"),
+					fieldWithPath("response.content").type(JsonFieldType.STRING).description("일기 내용")
+				)
+			));
+
+		verify(diaryService).getDetailedDiary(any(HttpServletRequest.class), any(Long.class));
 	}
 
 }

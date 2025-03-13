@@ -17,4 +17,8 @@ public class DocumentOptionalGenerator {
 	public static Attributes.Attribute localDateFormat() {
 		return setFormat("yyyy-MM-dd");
 	}
+
+	public static Attributes.Attribute dayOfWeekFormat() {
+		return setFormat("SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY");
+	}
 }

@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
-	 * 권한 에러
+	 * 권한 에러 - 토큰
 	 * HttpStatus 403
 	 */
 	@ExceptionHandler(TokenExpiredException.class)
@@ -74,6 +74,17 @@ public class GlobalExceptionHandler {
 	public ErrorResponse TokenExpiredException(TokenExpiredException e) {
 		return ErrorResponse.of(HttpStatus.FORBIDDEN, ResponseMessage.FORBIDDEN_MESSAGE.getMessage());
 	}
+
+	/**
+	 * 권한 에러
+	 * HttpStatus 403
+	 */
+	@ExceptionHandler(ForbiddenException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ErrorResponse forbiddenException(ForbiddenException e) {
+		return ErrorResponse.of(HttpStatus.FORBIDDEN, e.getMessage());
+	}
+
 
 	/**
 	 * 데이터 조회 에러
