@@ -52,4 +52,12 @@ public class Diary extends BaseEntity {
 		this.content = content;
 	}
 
+	/**
+	 * 자세한 일기 수정
+	 */
+	public void modifyDetailedDiary(String title, String content) {
+		this.title = title;
+		this.content = content;
+	}
+
 }

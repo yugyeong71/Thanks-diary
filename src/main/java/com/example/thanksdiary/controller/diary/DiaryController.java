@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.thanksdiary.dto.common.DataResponse;
 import com.example.thanksdiary.dto.diary.request.AllDiaryRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
+import com.example.thanksdiary.dto.diary.request.DetailedDiaryModifyRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryModifyRequest;
 import com.example.thanksdiary.dto.diary.response.AllDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
+import com.example.thanksdiary.dto.diary.response.DetailedDiaryModifyResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryModifyResponse;
@@ -63,6 +65,11 @@ public class DiaryController {
 	@PutMapping(value = "/simple", name = "간단한 일기 수정")
 	public DataResponse<SimpleDiaryModifyResponse> modifySimpleDiary(HttpServletRequest httpServletRequest, @RequestBody @Valid SimpleDiaryModifyRequest simpleDiaryModifyRequest) {
 		return new DataResponse<>(diaryService.modifySimpleDiary(httpServletRequest, simpleDiaryModifyRequest));
+	}
+
+	@PutMapping(value = "/detailed", name = "자세한 일기 수정")
+	private DataResponse<DetailedDiaryModifyResponse> modifyDetailedDiary(HttpServletRequest httpServletRequest, @RequestBody @Valid DetailedDiaryModifyRequest detailedDiaryModifyRequest) {
+		return new DataResponse<>(diaryService.modifyDetailedDiary(httpServletRequest, detailedDiaryModifyRequest));
 	}
 
 }
