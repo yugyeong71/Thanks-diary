@@ -45,4 +45,11 @@ public class Diary extends BaseEntity {
 	@Column(nullable = false)
 	private LocalDate recordDate;
 
+	/**
+	 * 간단한 일기 수정
+	 */
+	public void modifySimpleDiary(String content) {
+		this.content = content;
+	}
+
 }

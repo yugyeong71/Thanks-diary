@@ -41,11 +41,13 @@ import com.example.thanksdiary.dto.diary.common.DateSimpleDiaryDto;
 import com.example.thanksdiary.dto.diary.request.AllDiaryRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
+import com.example.thanksdiary.dto.diary.request.SimpleDiaryModifyRequest;
 import com.example.thanksdiary.dto.diary.response.AllDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
+import com.example.thanksdiary.dto.diary.response.SimpleDiaryModifyResponse;
 import com.example.thanksdiary.service.diary.DiaryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -350,6 +352,55 @@ public class DiaryControllerTest extends ControllerTest {
 			));
 
 		verify(diaryService).getAllDiary(any(HttpServletRequest.class), any(AllDiaryRequest.class));
+	}
+
+	@Test
+	@DisplayName("일기 수정 - 간단한")
+	public void modifySimpleDiary() throws Exception {
+
+		// given
+		SimpleDiaryModifyRequest simpleDiaryModifyRequest = SimpleDiaryModifyRequest.builder()
+			.id(1L)
+			.content("햇살이 창문을 따뜻하게 비추고, 차가운 바람이 커튼을 살며시 흔든다.")
+			.build();
+
+		SimpleDiaryModifyResponse simpleDiaryModifyResponse = SimpleDiaryModifyResponse.builder()
+			.content("햇살이 창문을 따뜻하게 비추고, 차가운 바람이 커튼을 살며시 흔든다.")
+			.date(LocalDate.now())
+			.build();
+
+		given(diaryService.modifySimpleDiary(any(HttpServletRequest.class), any(SimpleDiaryModifyRequest.class))).willReturn(simpleDiaryModifyResponse);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.put("/diary/simple")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(simpleDiaryModifyRequest))
+				.header(HttpHeaders.AUTHORIZATION, "감사일기.Access.Token")
+				.with(user("user").roles("USER"))
+		);
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("diary/simple/modify",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				requestFields(
+					fieldWithPath("id").type(JsonFieldType.NUMBER).description("일기 고유 번호"),
+					fieldWithPath("content").type(JsonFieldType.STRING).description("일기 내용")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+					fieldWithPath("response").type(JsonFieldType.OBJECT).description("결과 데이터"),
+					fieldWithPath("response.content").type(JsonFieldType.STRING).description("일기 내용"),
+					fieldWithPath("response.date").type(JsonFieldType.STRING).attributes(localDateFormat()).description("일기 작성일")
+				)
+			));
+
+		verify(diaryService).modifySimpleDiary(any(HttpServletRequest.class), any(SimpleDiaryModifyRequest.class));
 	}
 
 }

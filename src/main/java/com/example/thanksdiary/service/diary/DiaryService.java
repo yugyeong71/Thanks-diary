@@ -25,11 +25,13 @@ import com.example.thanksdiary.dto.diary.common.DateSimpleDiaryDto;
 import com.example.thanksdiary.dto.diary.request.AllDiaryRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
+import com.example.thanksdiary.dto.diary.request.SimpleDiaryModifyRequest;
 import com.example.thanksdiary.dto.diary.response.AllDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
+import com.example.thanksdiary.dto.diary.response.SimpleDiaryModifyResponse;
 import com.example.thanksdiary.service.user.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -163,6 +165,27 @@ public class DiaryService {
 		return AllDiaryResponse.builder()
 			.paging(pagingDto)
 			.allDiaryList(allDiaryDto.getContent())
+			.build();
+	}
+
+	/**
+	 * 간단한 일기 수정
+	 */
+	@Transactional
+	public SimpleDiaryModifyResponse modifySimpleDiary(HttpServletRequest httpServletRequest, SimpleDiaryModifyRequest simpleDiaryModifyRequest) {
+		User user = userService.getUser(httpServletRequest);
+
+		Diary diary = diaryRepository.findById(simpleDiaryModifyRequest.getId()).orElseThrow(() -> new NotFoundDataException("존재하지 않는 일기입니다."));
+
+		if (!user.getId().equals(diary.getUserId())) {
+			throw new ForbiddenException("해당 일기에 대한 접근 권한이 없습니다.");
+		}
+
+		diary.modifySimpleDiary(simpleDiaryModifyRequest.getContent());
+
+		return SimpleDiaryModifyResponse.builder()
+			.content(diary.getContent())
+			.date(diary.getRecordDate())
 			.build();
 	}
 }
