@@ -32,10 +32,16 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.example.thanksdiary.common.ControllerTest;
 import com.example.thanksdiary.controller.diary.DiaryController;
+import com.example.thanksdiary.domain.diary.enums.DiaryType;
+import com.example.thanksdiary.dto.common.PagingDto;
+import com.example.thanksdiary.dto.diary.common.AllDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateDetailedDiaryDto;
+import com.example.thanksdiary.dto.diary.common.DateDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateSimpleDiaryDto;
+import com.example.thanksdiary.dto.diary.request.AllDiaryRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
+import com.example.thanksdiary.dto.diary.response.AllDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
@@ -280,6 +286,70 @@ public class DiaryControllerTest extends ControllerTest {
 			));
 
 		verify(diaryService).getDetailedDiary(any(HttpServletRequest.class), any(Long.class));
+	}
+
+	@Test
+	@DisplayName("일기 전체 조회")
+	public void getAllDiary() throws Exception {
+
+		// given
+		LocalDate today = LocalDate.now();
+
+		List<DateDiaryDto> dateDiaryDto1 = List.of(new DateDiaryDto(10L, DiaryType.DETAILED, "오늘의 일기", "오늘은 짜장밥을 먹었다."));
+		List<DateDiaryDto> dateDiaryDto2 = List.of(new DateDiaryDto(8L, DiaryType.DETAILED, null, "오늘은 수영장에 갔다."));
+		List<DateDiaryDto> dateDiaryDto3 = List.of(new DateDiaryDto(7L, DiaryType.SIMPLE, null, "오늘은 호수공원에 갔다."));
+
+		AllDiaryResponse userList = AllDiaryResponse.builder()
+			.paging(new PagingDto(1, 2, 15))
+			.allDiaryList(List.of(
+				new AllDiaryDto(today, today.getDayOfWeek().toString(), dateDiaryDto1),
+				new AllDiaryDto(today.minusDays(1), today.minusDays(1).getDayOfWeek().toString(), dateDiaryDto2),
+				new AllDiaryDto(today.minusDays(2), today.minusDays(2).getDayOfWeek().toString(), dateDiaryDto3)
+			))
+			.build();
+
+		given(diaryService.getAllDiary(any(HttpServletRequest.class), any(AllDiaryRequest.class))).willReturn(userList);
+
+		// when
+		ResultActions result = mockMvc.perform(
+			RestDocumentationRequestBuilders.get("/diary?page={page}&size={size}", 1, 10)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.AUTHORIZATION, "감사일기.Access.Token")
+				.with(user("user").roles("USER"))
+		);
+
+		// then
+		result.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("diary/all",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				queryParameters(
+					parameterWithName("page").description("요청 페이지"),
+					parameterWithName("size").description("한 페이지에 조회할 데이터 개수")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+					fieldWithPath("response").type(JsonFieldType.OBJECT).description("결과 데이터"),
+					fieldWithPath("response.paging").type(JsonFieldType.OBJECT).description("페이징 정보"),
+					fieldWithPath("response.paging.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+					fieldWithPath("response.paging.totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 개수"),
+					fieldWithPath("response.paging.totalElements").type(JsonFieldType.NUMBER).description("총 데이터 개수"),
+					fieldWithPath("response.allDiaryList[]").type(JsonFieldType.ARRAY).optional().description("전체 일기 목록"),
+					fieldWithPath("response.allDiaryList[].date").type(JsonFieldType.STRING).description("일기 작성일"),
+					fieldWithPath("response.allDiaryList[].dayOfWeek").type(JsonFieldType.STRING).attributes(dayOfWeekFormat()).description("일기 작성 요일"),
+					fieldWithPath("response.allDiaryList[].diaryList[]").type(JsonFieldType.ARRAY).optional().description("날짜별 일기 목록"),
+					fieldWithPath("response.allDiaryList[].diaryList[].id").type(JsonFieldType.NUMBER).description("일기 고유 번호"),
+					fieldWithPath("response.allDiaryList[].diaryList[].type").type(JsonFieldType.STRING).attributes(diaryTypeFormat()).description("일기 타입"),
+					fieldWithPath("response.allDiaryList[].diaryList[].title").type(JsonFieldType.STRING).optional().description("일기 제목"),
+					fieldWithPath("response.allDiaryList[].diaryList[].content").type(JsonFieldType.STRING).description("일기 내용")
+				)
+			));
+
+		verify(diaryService).getAllDiary(any(HttpServletRequest.class), any(AllDiaryRequest.class));
 	}
 
 }

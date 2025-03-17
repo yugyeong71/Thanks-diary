@@ -244,3 +244,20 @@ include::{snippets}/diary/detailed/get/query-parameters.adoc[]
 === Response
 include::{snippets}/diary/detailed/get/response-fields.adoc[]
 include::{snippets}/diary/detailed/get/response-body.adoc[]
+
+[[getAllDiary]]
+== 13. 전체 일기 조회
+*전체 일기 조회 API*
+
+*[ 전체 일기 조회 실패 ]*::
+
+- 권한이 없는 사용자 : `"권한이 없는 사용자입니다."` (code : 401)
+- 존재하지 않는 사용자 : `"존재하지 않는 사용자입니다."` (code : 404)
+
+=== Http
+include::{snippets}/diary/all/http-request.adoc[]
+=== Request
+include::{snippets}/diary/all/query-parameters.adoc[]
+=== Response
+include::{snippets}/diary/all/response-fields.adoc[]
+include::{snippets}/diary/all/response-body.adoc[]

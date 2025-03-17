@@ -6,20 +6,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.thanksdiary.common.exception.BadRequestException;
 import com.example.thanksdiary.common.exception.ForbiddenException;
 import com.example.thanksdiary.common.exception.NotFoundDataException;
+import com.example.thanksdiary.dao.diary.DiaryCustomRepository;
 import com.example.thanksdiary.dao.diary.DiaryRepository;
 import com.example.thanksdiary.domain.diary.Diary;
 import com.example.thanksdiary.domain.diary.enums.DiaryType;
 import com.example.thanksdiary.domain.user.User;
+import com.example.thanksdiary.dto.common.PagingDto;
+import com.example.thanksdiary.dto.diary.common.AllDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateDetailedDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateSimpleDiaryDto;
+import com.example.thanksdiary.dto.diary.request.AllDiaryRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.SimpleDiaryCreateRequest;
+import com.example.thanksdiary.dto.diary.response.AllDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
@@ -36,6 +42,8 @@ public class DiaryService {
 	private final DiaryRepository diaryRepository;
 
 	private final UserService userService;
+
+	private final DiaryCustomRepository diaryCustomRepository;
 
 	/**
 	 * 간단한 일기 작성
@@ -138,6 +146,23 @@ public class DiaryService {
 			.dayOfWeek(diary.getRecordDate().getDayOfWeek().toString())
 			.title(diary.getTitle())
 			.content(diary.getContent())
+			.build();
+	}
+
+	/**
+	 * 일기 전체 조회
+	 */
+	@Transactional(readOnly = true)
+	public AllDiaryResponse getAllDiary(HttpServletRequest httpServletRequest, AllDiaryRequest allDiaryRequest) {
+		User user = userService.getUser(httpServletRequest);
+
+		Page<AllDiaryDto> allDiaryDto = diaryCustomRepository.findAllDiaryByDate(allDiaryRequest, user.getId());
+
+		PagingDto pagingDto = new PagingDto(allDiaryDto.getNumber(), allDiaryDto.getTotalPages(), allDiaryDto.getTotalElements());
+
+		return AllDiaryResponse.builder()
+			.paging(pagingDto)
+			.allDiaryList(allDiaryDto.getContent())
 			.build();
 	}
 }

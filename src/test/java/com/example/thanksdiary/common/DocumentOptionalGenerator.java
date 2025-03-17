@@ -21,4 +21,8 @@ public class DocumentOptionalGenerator {
 	public static Attributes.Attribute dayOfWeekFormat() {
 		return setFormat("SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY");
 	}
+
+	public static Attributes.Attribute diaryTypeFormat() {
+		return setFormat("DETAILED(자세한 일기), SIMPLE(간단한 일기)");
+	}
 }
