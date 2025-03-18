@@ -212,4 +212,20 @@ public class DiaryService {
 			.date(diary.getRecordDate())
 			.build();
 	}
+
+	/**
+	 * 일기 삭제
+	 */
+	@Transactional
+	public void deleteDiary(HttpServletRequest httpServletRequest, Long id) {
+		User user = userService.getUser(httpServletRequest);
+
+		Diary diary = diaryRepository.findById(id).orElseThrow(() -> new NotFoundDataException("존재하지 않는 일기입니다."));
+
+		if (!user.getId().equals(diary.getUserId())) {
+			throw new ForbiddenException("해당 일기에 대한 삭제 권한이 없습니다.");
+		}
+
+		diary.deleteDiary();
+	}
 }

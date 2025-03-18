@@ -41,4 +41,11 @@ public class BaseEntity {
 		this.deletedAt = LocalDateTime.now();
 	}
 
+	/**
+	 * 일기 삭제
+	 */
+	public void deleteDiary() {
+		this.deletedAt = LocalDateTime.now();
+	}
+
 }

@@ -458,4 +458,38 @@ public class DiaryControllerTest extends ControllerTest {
 		verify(diaryService).modifyDetailedDiary(any(HttpServletRequest.class), any(DetailedDiaryModifyRequest.class));
 	}
 
+	@Test
+	@DisplayName("일기 삭제")
+	public void deleteDiary() throws Exception {
+
+		// given
+		doNothing().when(diaryService).deleteDiary(any(HttpServletRequest.class), any(Long.class));
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.delete("/diary?id={id}", 2L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.AUTHORIZATION, "감사일기.Access.Token")
+				.with(user("user").roles("USER"))
+		);
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("diary/delete",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				queryParameters(
+					parameterWithName("id").description("일기 고유 번호")
+				),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지")
+				)
+			));
+
+		verify(diaryService).deleteDiary(any(HttpServletRequest.class), any(Long.class));
+	}
+
 }
