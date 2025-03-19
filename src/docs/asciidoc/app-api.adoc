@@ -304,3 +304,37 @@ include::{snippets}/diary/detailed/modify/request-fields.adoc[]
 === Response
 include::{snippets}/diary/detailed/modify/response-fields.adoc[]
 include::{snippets}/diary/detailed/modify/response-body.adoc[]
+
+[[deleteDiary]]
+== 16. 일기 삭제
+*일기 삭제 API*
+
+*[ 일기 삭제 실패 ]*::
+
+- 권한이 없는 사용자 : `"권한이 없는 사용자입니다."` (code : 401)
+- 존재하지 않는 사용자 : `"존재하지 않는 사용자입니다."` (code : 404)
+- 존재하지 않는 일기 : `"존재하지 않는 일기입니다."` (code : 404)
+- 요청 사용자와 일기 사용자 불일치 : `"해당 일기에 대한 삭제 권한이 없습니다."` (code : 403)
+
+=== Http
+include::{snippets}/diary/delete/http-request.adoc[]
+=== Request
+include::{snippets}/diary/delete/query-parameters.adoc[]
+=== Response
+include::{snippets}/diary/delete/response-fields.adoc[]
+include::{snippets}/diary/delete/response-body.adoc[]
+
+[[statisticsDiary]]
+== 17. 일기 통계 조회
+*일기 통계 조회 API*
+
+*[ 일기 통계 조회 실패 ]*::
+
+- 권한이 없는 사용자 : `"권한이 없는 사용자입니다."` (code : 401)
+- 존재하지 않는 사용자 : `"존재하지 않는 사용자입니다."` (code : 404)
+
+=== Http
+include::{snippets}/diary/statistics/http-request.adoc[]
+=== Response
+include::{snippets}/diary/statistics/response-fields.adoc[]
+include::{snippets}/diary/statistics/response-body.adoc[]

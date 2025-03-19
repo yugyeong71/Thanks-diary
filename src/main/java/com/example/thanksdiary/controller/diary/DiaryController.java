@@ -3,6 +3,7 @@ package com.example.thanksdiary.controller.diary;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.thanksdiary.dto.common.DataResponse;
+import com.example.thanksdiary.dto.common.SuccessResponse;
 import com.example.thanksdiary.dto.diary.request.AllDiaryRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryModifyRequest;
@@ -22,6 +24,7 @@ import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryModifyResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
+import com.example.thanksdiary.dto.diary.response.DiaryStatisticResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryModifyResponse;
 import com.example.thanksdiary.service.diary.DiaryService;
@@ -70,6 +73,17 @@ public class DiaryController {
 	@PutMapping(value = "/detailed", name = "자세한 일기 수정")
 	private DataResponse<DetailedDiaryModifyResponse> modifyDetailedDiary(HttpServletRequest httpServletRequest, @RequestBody @Valid DetailedDiaryModifyRequest detailedDiaryModifyRequest) {
 		return new DataResponse<>(diaryService.modifyDetailedDiary(httpServletRequest, detailedDiaryModifyRequest));
+	}
+
+	@DeleteMapping(name = "일기 삭제")
+	private SuccessResponse deleteDiary(HttpServletRequest httpServletRequest, @RequestParam Long id) {
+		diaryService.deleteDiary(httpServletRequest, id);
+		return new SuccessResponse();
+	}
+
+	@GetMapping(value = "/statistics", name = "일기 통계 조회")
+	private DataResponse<DiaryStatisticResponse> statisticsDiary(HttpServletRequest httpServletRequest) {
+		return new DataResponse<>(diaryService.statisticsDiary(httpServletRequest));
 	}
 
 }
