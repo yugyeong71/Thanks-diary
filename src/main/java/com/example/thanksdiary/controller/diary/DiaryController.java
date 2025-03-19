@@ -24,6 +24,7 @@ import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryModifyResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
+import com.example.thanksdiary.dto.diary.response.DiaryStatisticResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryModifyResponse;
 import com.example.thanksdiary.service.diary.DiaryService;
@@ -78,6 +79,11 @@ public class DiaryController {
 	private SuccessResponse deleteDiary(HttpServletRequest httpServletRequest, @RequestParam Long id) {
 		diaryService.deleteDiary(httpServletRequest, id);
 		return new SuccessResponse();
+	}
+
+	@GetMapping(value = "/statistics", name = "일기 통계 조회")
+	private DataResponse<DiaryStatisticResponse> statisticsDiary(HttpServletRequest httpServletRequest) {
+		return new DataResponse<>(diaryService.statisticsDiary(httpServletRequest));
 	}
 
 }

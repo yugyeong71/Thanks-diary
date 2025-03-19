@@ -11,4 +11,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
 	List<Diary> findAllByUserIdAndRecordDate(Long userId, LocalDate date);
 
+	int countByUserId(Long userId);
+
 }

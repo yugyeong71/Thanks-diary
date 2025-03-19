@@ -73,4 +73,18 @@ public class DiaryCustomRepositoryImpl implements DiaryCustomRepository {
 			.fetch();
 	}
 
+	/**
+	 * 일기 날짜 리스트 추출
+	 */
+	@Override
+	public List<LocalDate> findDiaryDateListByUserId(Long userId) {
+		return queryFactory
+			.select(diary.recordDate)
+			.distinct()
+			.from(diary)
+			.where(diary.userId.eq(userId))
+			.orderBy(diary.recordDate.asc())
+			.fetch();
+	}
+
 }

@@ -48,6 +48,7 @@ import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryModifyResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
+import com.example.thanksdiary.dto.diary.response.DiaryStatisticResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryModifyResponse;
 import com.example.thanksdiary.service.diary.DiaryService;
@@ -490,6 +491,46 @@ public class DiaryControllerTest extends ControllerTest {
 			));
 
 		verify(diaryService).deleteDiary(any(HttpServletRequest.class), any(Long.class));
+	}
+
+	@Test
+	@DisplayName("일기 통계 조회")
+	public void statisticsDiary() throws Exception {
+
+		// given
+		DiaryStatisticResponse diaryStatisticResponse = DiaryStatisticResponse.builder()
+			.allDiaryCount(17)
+			.consecutiveDay(7)
+			.build();
+
+		given(diaryService.statisticsDiary(any(HttpServletRequest.class))).willReturn(diaryStatisticResponse);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.get("/diary/statistics")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(diaryStatisticResponse))
+				.header(HttpHeaders.AUTHORIZATION, "감사일기.Access.Token")
+				.with(user("user").roles("USER"))
+		);
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("code").value(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andDo(document("diary/statistics",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				responseFields(
+					fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메세지"),
+					fieldWithPath("response").type(JsonFieldType.OBJECT).description("결과 데이터"),
+					fieldWithPath("response.allDiaryCount").type(JsonFieldType.NUMBER).description("전체 일기 수"),
+					fieldWithPath("response.consecutiveDay").type(JsonFieldType.NUMBER).description("최대 연속 기록일")
+				)
+			));
+
+		verify(diaryService).statisticsDiary(any(HttpServletRequest.class));
 	}
 
 }

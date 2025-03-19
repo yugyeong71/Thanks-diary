@@ -32,6 +32,7 @@ import com.example.thanksdiary.dto.diary.response.DateDiaryResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryModifyResponse;
 import com.example.thanksdiary.dto.diary.response.DetailedDiaryResponse;
+import com.example.thanksdiary.dto.diary.response.DiaryStatisticResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryCreateResponse;
 import com.example.thanksdiary.dto.diary.response.SimpleDiaryModifyResponse;
 import com.example.thanksdiary.service.user.UserService;
@@ -228,4 +229,50 @@ public class DiaryService {
 
 		diary.deleteDiary();
 	}
+
+	/**
+	 * 일기 통계 조회
+	 */
+	@Transactional(readOnly = true)
+	public DiaryStatisticResponse statisticsDiary(HttpServletRequest httpServletRequest) {
+		User user = userService.getUser(httpServletRequest);
+
+		int allDiaryCount = diaryRepository.countByUserId(user.getId());
+
+		int consecutiveDay = findMaxConsecutiveDay(user.getId());
+
+		return DiaryStatisticResponse.builder()
+			.allDiaryCount(allDiaryCount)
+			.consecutiveDay(consecutiveDay)
+			.build();
+	}
+
+	/**
+	 * 최대 연속 기록일 추출
+	 */
+	public int findMaxConsecutiveDay(Long userId) {
+		List<LocalDate> diaryDateList = diaryCustomRepository.findDiaryDateListByUserId(userId);
+
+		if (diaryDateList.isEmpty()) {
+			return 0;
+		}
+
+		int maxStreak = 1;
+		int currentStreak = 1;
+
+		for (int i = 1; i < diaryDateList.size(); i++) {
+			LocalDate prevDate = diaryDateList.get(i - 1);
+			LocalDate currentDate = diaryDateList.get(i);
+
+			if (currentDate.equals(prevDate.plusDays(1))) {
+				currentStreak++;
+			} else {
+				maxStreak = Math.max(maxStreak, currentStreak);
+				currentStreak = 1;
+			}
+		}
+
+		return Math.max(maxStreak, currentStreak);
+	}
+
 }
