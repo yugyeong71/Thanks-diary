@@ -3,7 +3,7 @@ package com.example.thanksdiary.dto.diary.response;
 import java.util.List;
 
 import com.example.thanksdiary.dto.common.PagingDto;
-import com.example.thanksdiary.dto.diary.common.AllDiaryDto;
+import com.example.thanksdiary.dto.diary.common.DateDiaryDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +16,6 @@ public class AllDiaryResponse {
 
 	private PagingDto paging;
 
-	private List<AllDiaryDto> allDiaryList;
+	private List<DateDiaryDto> allDiaryList;
 
 }

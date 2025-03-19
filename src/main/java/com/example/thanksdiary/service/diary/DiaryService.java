@@ -19,8 +19,8 @@ import com.example.thanksdiary.domain.diary.Diary;
 import com.example.thanksdiary.domain.diary.enums.DiaryType;
 import com.example.thanksdiary.domain.user.User;
 import com.example.thanksdiary.dto.common.PagingDto;
-import com.example.thanksdiary.dto.diary.common.AllDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateDetailedDiaryDto;
+import com.example.thanksdiary.dto.diary.common.DateDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateSimpleDiaryDto;
 import com.example.thanksdiary.dto.diary.request.AllDiaryRequest;
 import com.example.thanksdiary.dto.diary.request.DetailedDiaryCreateRequest;
@@ -161,7 +161,7 @@ public class DiaryService {
 	public AllDiaryResponse getAllDiary(HttpServletRequest httpServletRequest, AllDiaryRequest allDiaryRequest) {
 		User user = userService.getUser(httpServletRequest);
 
-		Page<AllDiaryDto> allDiaryDto = diaryCustomRepository.findAllDiaryByDate(allDiaryRequest, user.getId());
+		Page<DateDiaryDto> allDiaryDto = diaryCustomRepository.findAllDiaryByDate(allDiaryRequest, user.getId());
 
 		PagingDto pagingDto = new PagingDto(allDiaryDto.getNumber(), allDiaryDto.getTotalPages(), allDiaryDto.getTotalElements());
 

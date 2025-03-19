@@ -46,22 +46,22 @@ public class DiaryController {
 	}
 
 	@PostMapping(value = "/detailed", name = "자세한 일기 작성")
-	private DataResponse<DetailedDiaryCreateResponse> createDetailedDiary(HttpServletRequest httpServletRequest, @RequestBody @Valid DetailedDiaryCreateRequest detailedDiaryCreateRequest) {
+	public DataResponse<DetailedDiaryCreateResponse> createDetailedDiary(HttpServletRequest httpServletRequest, @RequestBody @Valid DetailedDiaryCreateRequest detailedDiaryCreateRequest) {
 		return new DataResponse<>(diaryService.createDetailedDiary(httpServletRequest, detailedDiaryCreateRequest));
 	}
 
 	@GetMapping(value = "/date", name = "날짜별 일기 조회")
-	private DataResponse<DateDiaryResponse> getDiaryByDate(HttpServletRequest httpServletRequest, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+	public DataResponse<DateDiaryResponse> getDiaryByDate(HttpServletRequest httpServletRequest, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 		return new DataResponse<>(diaryService.getDiaryByDate(httpServletRequest, date));
 	}
 
 	@GetMapping(value = "/detailed", name = "자세한 일기 상세 조회")
-	private DataResponse<DetailedDiaryResponse> getDetailedDiary(HttpServletRequest httpServletRequest, @RequestParam Long id) {
+	public DataResponse<DetailedDiaryResponse> getDetailedDiary(HttpServletRequest httpServletRequest, @RequestParam Long id) {
 		return new DataResponse<>(diaryService.getDetailedDiary(httpServletRequest, id));
 	}
 
 	@GetMapping(name = "일기 전체 조회")
-	private DataResponse<AllDiaryResponse> getAllDiary(HttpServletRequest httpServletRequest, AllDiaryRequest allDiaryRequest) {
+	public DataResponse<AllDiaryResponse> getAllDiary(HttpServletRequest httpServletRequest, AllDiaryRequest allDiaryRequest) {
 		return new DataResponse<>(diaryService.getAllDiary(httpServletRequest, allDiaryRequest));
 	}
 
@@ -71,18 +71,18 @@ public class DiaryController {
 	}
 
 	@PutMapping(value = "/detailed", name = "자세한 일기 수정")
-	private DataResponse<DetailedDiaryModifyResponse> modifyDetailedDiary(HttpServletRequest httpServletRequest, @RequestBody @Valid DetailedDiaryModifyRequest detailedDiaryModifyRequest) {
+	public DataResponse<DetailedDiaryModifyResponse> modifyDetailedDiary(HttpServletRequest httpServletRequest, @RequestBody @Valid DetailedDiaryModifyRequest detailedDiaryModifyRequest) {
 		return new DataResponse<>(diaryService.modifyDetailedDiary(httpServletRequest, detailedDiaryModifyRequest));
 	}
 
 	@DeleteMapping(name = "일기 삭제")
-	private SuccessResponse deleteDiary(HttpServletRequest httpServletRequest, @RequestParam Long id) {
+	public SuccessResponse deleteDiary(HttpServletRequest httpServletRequest, @RequestParam Long id) {
 		diaryService.deleteDiary(httpServletRequest, id);
 		return new SuccessResponse();
 	}
 
 	@GetMapping(value = "/statistics", name = "일기 통계 조회")
-	private DataResponse<DiaryStatisticResponse> statisticsDiary(HttpServletRequest httpServletRequest) {
+	public DataResponse<DiaryStatisticResponse> statisticsDiary(HttpServletRequest httpServletRequest) {
 		return new DataResponse<>(diaryService.statisticsDiary(httpServletRequest));
 	}
 

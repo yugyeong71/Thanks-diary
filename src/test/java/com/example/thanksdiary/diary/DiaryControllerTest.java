@@ -34,7 +34,6 @@ import com.example.thanksdiary.common.ControllerTest;
 import com.example.thanksdiary.controller.diary.DiaryController;
 import com.example.thanksdiary.domain.diary.enums.DiaryType;
 import com.example.thanksdiary.dto.common.PagingDto;
-import com.example.thanksdiary.dto.diary.common.AllDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateDetailedDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateDiaryDto;
 import com.example.thanksdiary.dto.diary.common.DateSimpleDiaryDto;
@@ -300,16 +299,12 @@ public class DiaryControllerTest extends ControllerTest {
 		// given
 		LocalDate today = LocalDate.now();
 
-		List<DateDiaryDto> dateDiaryDto1 = List.of(new DateDiaryDto(10L, DiaryType.DETAILED, "오늘의 일기", "오늘은 짜장밥을 먹었다."));
-		List<DateDiaryDto> dateDiaryDto2 = List.of(new DateDiaryDto(8L, DiaryType.DETAILED, null, "오늘은 수영장에 갔다."));
-		List<DateDiaryDto> dateDiaryDto3 = List.of(new DateDiaryDto(7L, DiaryType.SIMPLE, null, "오늘은 호수공원에 갔다."));
-
 		AllDiaryResponse userList = AllDiaryResponse.builder()
 			.paging(new PagingDto(1, 2, 15))
 			.allDiaryList(List.of(
-				new AllDiaryDto(today, today.getDayOfWeek().toString(), dateDiaryDto1),
-				new AllDiaryDto(today.minusDays(1), today.minusDays(1).getDayOfWeek().toString(), dateDiaryDto2),
-				new AllDiaryDto(today.minusDays(2), today.minusDays(2).getDayOfWeek().toString(), dateDiaryDto3)
+				new DateDiaryDto(10L, today, today.getDayOfWeek().toString(), DiaryType.DETAILED, "오늘의 일기", "오늘은 짜장밥을 먹었다."),
+				new DateDiaryDto(8L, today.minusDays(1), today.minusDays(1).getDayOfWeek().toString(), DiaryType.DETAILED, null, "오늘은 수영장에 갔다."),
+				new DateDiaryDto(7L, today.minusDays(2), today.minusDays(2).getDayOfWeek().toString(), DiaryType.SIMPLE, null, "오늘은 호수공원에 갔다.")
 			))
 			.build();
 
@@ -344,13 +339,12 @@ public class DiaryControllerTest extends ControllerTest {
 					fieldWithPath("response.paging.totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 개수"),
 					fieldWithPath("response.paging.totalElements").type(JsonFieldType.NUMBER).description("총 데이터 개수"),
 					fieldWithPath("response.allDiaryList[]").type(JsonFieldType.ARRAY).optional().description("전체 일기 목록"),
+					fieldWithPath("response.allDiaryList[].id").type(JsonFieldType.NUMBER).description("일기 고유 번호"),
 					fieldWithPath("response.allDiaryList[].date").type(JsonFieldType.STRING).description("일기 작성일"),
 					fieldWithPath("response.allDiaryList[].dayOfWeek").type(JsonFieldType.STRING).attributes(dayOfWeekFormat()).description("일기 작성 요일"),
-					fieldWithPath("response.allDiaryList[].diaryList[]").type(JsonFieldType.ARRAY).optional().description("날짜별 일기 목록"),
-					fieldWithPath("response.allDiaryList[].diaryList[].id").type(JsonFieldType.NUMBER).description("일기 고유 번호"),
-					fieldWithPath("response.allDiaryList[].diaryList[].type").type(JsonFieldType.STRING).attributes(diaryTypeFormat()).description("일기 타입"),
-					fieldWithPath("response.allDiaryList[].diaryList[].title").type(JsonFieldType.STRING).optional().description("일기 제목"),
-					fieldWithPath("response.allDiaryList[].diaryList[].content").type(JsonFieldType.STRING).description("일기 내용")
+					fieldWithPath("response.allDiaryList[].type").type(JsonFieldType.STRING).attributes(diaryTypeFormat()).description("일기 타입"),
+					fieldWithPath("response.allDiaryList[].title").type(JsonFieldType.STRING).optional().description("일기 제목"),
+					fieldWithPath("response.allDiaryList[].content").type(JsonFieldType.STRING).description("일기 내용")
 				)
 			));
 
