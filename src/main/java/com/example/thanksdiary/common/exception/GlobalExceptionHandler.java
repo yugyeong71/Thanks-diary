@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(TokenExpiredException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
-	public ErrorResponse TokenExpiredException(TokenExpiredException e) {
+	public ErrorResponse To러kenExpiredException(TokenExpiredException e) {
 		return ErrorResponse.of(HttpStatus.FORBIDDEN, ResponseMessage.FORBIDDEN_MESSAGE.getMessage());
 	}
 
