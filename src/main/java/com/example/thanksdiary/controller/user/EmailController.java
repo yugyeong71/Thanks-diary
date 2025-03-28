@@ -37,11 +37,13 @@ public class EmailController {
 
 	@PostMapping(value = "/send", name = "이메일 인증 코드 요청")
 	public SuccessResponse sendVerificationCode(@RequestBody @Valid SendVerificationCodeRequest sendVerificationCodeRequest) {
-		return emailService.sendVerificationCode(sendVerificationCodeRequest);
+		emailService.sendVerificationCode(sendVerificationCodeRequest);
+		return new SuccessResponse();
 	}
 
 	@PostMapping(value = "/verify", name = "이메일 인증 코드 검증")
 	public SuccessResponse verifyEmailCode(@RequestBody @Valid VerifyEmailCodeRequest verifyEmailCodeRequest) {
-		return emailService.verifyEmailCode(verifyEmailCodeRequest);
+		emailService.verifyEmailCode(verifyEmailCodeRequest);
+		return new SuccessResponse();
 	}
 }

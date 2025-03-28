@@ -1,6 +1,7 @@
 package com.example.thanksdiary.service.user;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 import org.springframework.mail.MailException;
@@ -12,10 +13,10 @@ import com.example.thanksdiary.common.exception.AlreadyDataException;
 import com.example.thanksdiary.common.exception.BadRequestException;
 import com.example.thanksdiary.common.exception.UnauthorizedException;
 import com.example.thanksdiary.dao.user.UserRepository;
-import com.example.thanksdiary.dto.common.SuccessResponse;
+import com.example.thanksdiary.dao.verificationCode.VerificationCodeRepository;
+import com.example.thanksdiary.domain.verificationCode.VerificationCode;
 import com.example.thanksdiary.dto.user.request.SendVerificationCodeRequest;
 import com.example.thanksdiary.dto.user.request.VerifyEmailCodeRequest;
-import com.example.thanksdiary.service.common.RedisService;
 
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -33,7 +34,7 @@ public class EmailService {
 
 	private final JavaMailSender javaMailSender;
 
-	private final RedisService redisService;
+	private final VerificationCodeRepository verificationCodeRepository;
 
 	/**
 	 * 이메일 중복 확인
@@ -49,20 +50,22 @@ public class EmailService {
 	 * 이메일 인증 코드 요청
 	 */
 	@Transactional
-	public SuccessResponse sendVerificationCode(SendVerificationCodeRequest sendVerificationCodeRequest) {
+	public void sendVerificationCode(SendVerificationCodeRequest sendVerificationCodeRequest) {
 		try {
 			String emailCode = createVerificationCode();
 			MimeMessage message = createMessage(sendVerificationCodeRequest.getEmail(), emailCode);
 
-			if (redisService.existData(sendVerificationCodeRequest.getEmail())) { // 기존에 발급 받았던 인증 코드 삭제
-				redisService.deleteData(sendVerificationCodeRequest.getEmail());
-			}
+			verificationCodeRepository.deleteByEmail(sendVerificationCodeRequest.getEmail());
+
+			VerificationCode code = VerificationCode.builder()
+				.email(sendVerificationCodeRequest.getEmail())
+				.code(emailCode)
+				.expiresAt(LocalDateTime.now().plusMinutes(5))
+				.build();
+
+			verificationCodeRepository.save(code);
 
 			javaMailSender.send(message);
-
-			redisService.setDataExpire(sendVerificationCodeRequest.getEmail(), emailCode, 5 * 60 * 1000L);
-
-			return new SuccessResponse();
 		} catch (MessagingException | UnsupportedEncodingException | MailException e) {
 			log.error("메일 전송 실패: {}", e.getMessage(), e);
 			throw new BadRequestException("메일 전송에 실패했습니다.");
@@ -108,16 +111,14 @@ public class EmailService {
 	 * 이메일 인증 코드 검증
 	 */
 	@Transactional(readOnly = true)
-	public SuccessResponse verifyEmailCode(VerifyEmailCodeRequest verifyEmailCodeRequest) {
-		String code = redisService.getData(verifyEmailCodeRequest.getEmail());
+	public void verifyEmailCode(VerifyEmailCodeRequest verifyEmailCodeRequest) {
+		VerificationCode code = verificationCodeRepository.findByEmail(verifyEmailCodeRequest.getEmail()).orElseThrow(() -> new UnauthorizedException("인증 코드가 만료되었습니다."));
 
-		if (code == null) {
+		if (code.getExpiresAt().isBefore(LocalDateTime.now())) {
 			throw new UnauthorizedException("인증 코드가 만료되었습니다.");
 		}
 
-		if (code.equals(verifyEmailCodeRequest.getCode())) {
-			return new SuccessResponse();
-		} else {
+		if (!code.getCode().equals(verifyEmailCodeRequest.getCode())) {
 			throw new UnauthorizedException("인증 코드가 일치하지 않습니다.");
 		}
 	}
