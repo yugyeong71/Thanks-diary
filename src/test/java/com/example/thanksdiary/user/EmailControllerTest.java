@@ -25,7 +25,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.example.thanksdiary.common.ControllerTest;
 import com.example.thanksdiary.controller.user.EmailController;
-import com.example.thanksdiary.dto.common.SuccessResponse;
 import com.example.thanksdiary.dto.user.request.SendVerificationCodeRequest;
 import com.example.thanksdiary.dto.user.request.VerifyEmailCodeRequest;
 import com.example.thanksdiary.service.user.EmailService;
@@ -91,7 +90,7 @@ public class EmailControllerTest extends ControllerTest {
 			.email("thanks123@gmail.com")
 			.build();
 
-		given(emailService.sendVerificationCode(any(SendVerificationCodeRequest.class))).willReturn(new SuccessResponse());
+		doNothing().when(emailService).sendVerificationCode(any(SendVerificationCodeRequest.class));
 
 		// when
 		ResultActions resultActions = mockMvc.perform(
@@ -129,7 +128,7 @@ public class EmailControllerTest extends ControllerTest {
 			.code("123456")
 			.build();
 
-		given(emailService.verifyEmailCode(any(VerifyEmailCodeRequest.class))).willReturn(new SuccessResponse());
+		doNothing().when(emailService).verifyEmailCode(any(VerifyEmailCodeRequest.class));
 
 		// when
 		ResultActions resultActions = mockMvc.perform(

@@ -1,7 +1,6 @@
 package com.example.thanksdiary.service.user;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,15 +10,16 @@ import com.example.thanksdiary.common.exception.TokenExpiredException;
 import com.example.thanksdiary.common.exception.UnauthorizedException;
 import com.example.thanksdiary.common.jwt.JwtTokenUtil;
 import com.example.thanksdiary.dao.user.UserRepository;
+import com.example.thanksdiary.dao.verificationCode.VerificationCodeRepository;
 import com.example.thanksdiary.domain.common.enums.TokenType;
 import com.example.thanksdiary.domain.common.enums.UserRole;
 import com.example.thanksdiary.domain.user.User;
+import com.example.thanksdiary.domain.verificationCode.VerificationCode;
 import com.example.thanksdiary.dto.user.request.UserLoginRequest;
 import com.example.thanksdiary.dto.user.request.UserSignUpRequest;
 import com.example.thanksdiary.dto.user.response.AccessTokenRefreshResponse;
 import com.example.thanksdiary.dto.user.response.UserLoginResponse;
 import com.example.thanksdiary.dto.user.response.UserSignUpResponse;
-import com.example.thanksdiary.service.common.RedisService;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +37,7 @@ public class UserAuthService {
 
 	private final JwtTokenUtil jwtTokenUtil;
 
-	private final RedisService redisService;
+	private final VerificationCodeRepository verificationCodeRepository;
 
 
 	/**
@@ -47,10 +47,9 @@ public class UserAuthService {
 	public UserSignUpResponse userSignUp(UserSignUpRequest userSignUpRequest) {
 		emailService.emailCheck(userSignUpRequest.getEmail());
 
-		String code = Optional.ofNullable(redisService.getData(userSignUpRequest.getEmail()))
-			.orElseThrow(() -> new UnauthorizedException("인증 코드가 존재하지 않습니다."));
+		VerificationCode verificationCode = verificationCodeRepository.findByEmail(userSignUpRequest.getEmail()).orElseThrow(() -> new UnauthorizedException("인증 코드가 존재하지 않습니다."));
 
-		if (!userSignUpRequest.getCode().equals(code)) {
+		if (!userSignUpRequest.getCode().equals(verificationCode.getCode())) {
 			throw new UnauthorizedException("인증 코드가 일치하지 않습니다.");
 		}
 
