@@ -28,7 +28,7 @@ repositories {
 ext {
     snippetsDir = file('build/generated-snippets')
     originalHtml = file('build/docs/asciidoc')
-    docsDir = file('build/resources/main/static/docs')
+    docsDir = file('src/docs')
 }
 
 asciidoctor {
