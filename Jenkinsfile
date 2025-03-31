@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   tools {
-    jdk("java-17-amazon-corretto")
+    jdk 'JDK 17'
   }
 
   environment {
