@@ -52,11 +52,11 @@ pipeline {
       steps {
         script {
           withCredentials([aws(credentialsId: AWS_CREDENTIALS, region: AWS_REGION)]) {
-            sh """
-              $(aws ecr get-login --no-include-email --region ${AWS_REGION})
+            sh '''
+              aws ecr get-login-password --region '${AWS_REGION}' | docker login --username AWS --password-stdin ${ECR_REGISTRY}
               docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${BUILD_NUMBER}
               docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:latest
-            """
+            '''
           }
         }
       }
