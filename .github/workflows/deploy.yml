@@ -61,6 +61,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY }}
+
             export IMAGE_NAME="${{ secrets.IMAGE_NAME }}"
             export IMAGE_STORAGE="${{ secrets.ECR_REPOSITORY }}"
             export BUILD_NUMBER="${{ secrets.IMAGE_TAG }}"
