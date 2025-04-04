@@ -61,6 +61,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            export IMAGE_NAME="${{ secrets.IMAGE_NAME }}"
+            export IMAGE_STORAGE="${{ secrets.ECR_REPOSITORY }}"
+            export BUILD_NUMBER="${{ secrets.IMAGE_TAG }}"
+            
             ./home/ubuntu/dev/deploy.sh
             
             echo "Checking service health..."
