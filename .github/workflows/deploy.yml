@@ -61,8 +61,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/dev/deploy
-            ./deploy.sh
+            ./home/ubuntu/dev/deploy.sh
             
             echo "Checking service health..."
             curl -f http://localhost:8080/health || { echo "Health check failed"; exit 1; }
