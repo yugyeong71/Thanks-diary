@@ -67,7 +67,7 @@ jobs:
             export IMAGE_STORAGE="${{ secrets.ECR_REPOSITORY }}"
             export BUILD_NUMBER="${{ secrets.IMAGE_TAG }}"
             
-            /home/ubuntu/dev/deploy.sh
+            /home/ubuntu/thanks-diary-dev/deploy.sh
             
             echo "Checking service health..."
             curl -f http://localhost:8080/health || { echo "Health check failed"; exit 1; }
