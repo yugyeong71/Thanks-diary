@@ -1,1 +1,1 @@
-## 감사일기 (Thanks-Diary)
+## 감사일기(Thanks-Diary)
