@@ -58,7 +58,9 @@ jobs:
     steps:
       - name: Get GitHub Actions public IP
         id: ip
-        run: echo "IP=$(curl -s https://checkip.amazonaws.com)" >> $GITHUB_ENV
+        run: |
+          IP=$(curl -s https://checkip.amazonaws.com)
+          echo "IP=$IP" >> $GITHUB_ENV
 
       - name: Authorize IP for EC2 SSH (port 22)
         run: |
