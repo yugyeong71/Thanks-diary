@@ -83,6 +83,9 @@ jobs:
             --port 3306 \
             --cidr ${{ secrets.AWS_EC2_IP_DEV }}/32
 
+      - name: Wait for security group propagation
+        run: sleep 7
+
       - name: Deploy on EC2 instance
         uses: appleboy/ssh-action@v0.1.10
         with:
