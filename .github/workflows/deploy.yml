@@ -65,7 +65,7 @@ jobs:
       - name: Authorize IP for EC2 SSH (port 22)
         run: |
           aws ec2 authorize-security-group-ingress \
-            --region ${{ secrets.AWS_REGION }} \ 
+            --region ${{ secrets.AWS_REGION }} \
             --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 22 \
@@ -74,7 +74,7 @@ jobs:
       - name: Authorize IP for RDS MySQL (port 3306)
         run: |
           aws ec2 authorize-security-group-ingress \
-            --region ${{ secrets.AWS_REGION }} \ 
+            --region ${{ secrets.AWS_REGION }} \
             --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 3306 \
@@ -116,7 +116,7 @@ jobs:
       - name: Revoke IP from EC2 SSH
         run: |
           aws ec2 revoke-security-group-ingress \
-            --region ${{ secrets.AWS_REGION }} \ 
+            --region ${{ secrets.AWS_REGION }} \
             --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 22 \
@@ -125,7 +125,7 @@ jobs:
       - name: Revoke IP from RDS MySQL
         run: |
           aws ec2 revoke-security-group-ingress \
-            --region ${{ secrets.AWS_REGION }} \ 
+            --region ${{ secrets.AWS_REGION }} \
             --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 3306 \
