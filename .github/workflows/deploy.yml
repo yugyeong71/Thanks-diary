@@ -56,6 +56,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Get GitHub Actions public IP
         id: ip
         run: echo "IP=$(curl -s https://checkip.amazonaws.com)" >> $GITHUB_ENV
@@ -66,7 +73,7 @@ jobs:
             --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 22 \
-            --cidr ${{ env.IP }}/32
+            --cidr ${{ secrets.AWS_EC2_IP_DEV }}/32
 
       - name: Authorize IP for RDS MySQL (port 3306)
         run: |
@@ -105,3 +112,19 @@ jobs:
             
             echo "Checking service health..."
             curl -f http://localhost:8080/health || { echo "Health check failed"; exit 1; }
+
+      - name: Revoke IP from EC2 SSH
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ secrets.AWS_EC2_IP_DEV }}/32
+
+      - name: Revoke IP from RDS MySQL
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
+            --protocol tcp \
+            --port 3306 \
+            --cidr ${{ secrets.AWS_EC2_IP_DEV }}/32
