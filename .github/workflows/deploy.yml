@@ -87,9 +87,6 @@ jobs:
             --port 3306 \
             --cidr ${{ env.IP }}/32
 
-      - name: Wait for security group propagation
-        run: sleep 7
-
       - name: Deploy on EC2 instance
         uses: appleboy/ssh-action@v0.1.10
         with:
