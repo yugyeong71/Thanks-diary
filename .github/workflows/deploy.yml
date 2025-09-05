@@ -94,13 +94,22 @@ jobs:
           host: ${{ secrets.AWS_EC2_IP_DEV }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: SPRING_DATASOURCE_URL,SPRING_DATASOURCE_USERNAME,SPRING_DATASOURCE_PASSWORD,SPRING_MAIL_HOST,SPRING_MAIL_PORT,SPRING_MAIL_USERNAME,SPRING_MAIL_PASSWORD,SPRING_JWT_ACCESS_TOKEN_KEY,SPRING_JWT_REFRESH_TOKEN_KEY
           script: |
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY }}
 
             export IMAGE_NAME="${{ secrets.IMAGE_NAME }}"
             export IMAGE_STORAGE="${{ secrets.ECR_REPOSITORY }}"
             export BUILD_NUMBER="${{ secrets.IMAGE_TAG }}"
+            
+            export SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}"
+            export SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}"
+            export SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+            export SPRING_MAIL_HOST="${{ secrets.SPRING_MAIL_HOST }}"
+            export SPRING_MAIL_PORT="${{ secrets.SPRING_MAIL_PORT }}"
+            export SPRING_MAIL_USERNAME="${{ secrets.SPRING_MAIL_USERNAME }}"
+            export SPRING_MAIL_PASSWORD="${{ secrets.SPRING_MAIL_PASSWORD }}"
+            export SPRING_JWT_ACCESS_TOKEN_KEY="${{ secrets.SPRING_JWT_ACCESS_TOKEN_KEY }}"
+            export SPRING_JWT_REFRESH_TOKEN_KEY="${{ secrets.SPRING_JWT_REFRESH_TOKEN_KEY }}"
             
             /home/ubuntu/thanks-diary-dev/deploy.sh
             
