@@ -23,5 +23,5 @@ spring:
             required: true
 
 jwt:
-  accessTokenKey: ${SPRING_JWT_ACCESS_TOKEN_KEY}
-  refreshTokenKey: ${SPRING_JWT_REFRESH_TOKEN_KEY}
+  accessTokenKey: ${JWT_ACCESS_TOKEN_KEY}
+  refreshTokenKey: ${JWT_REFRESH_TOKEN_KEY}
