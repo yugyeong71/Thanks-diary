@@ -108,8 +108,8 @@ jobs:
             export SPRING_MAIL_PORT="${{ secrets.SPRING_MAIL_PORT }}"
             export SPRING_MAIL_USERNAME="${{ secrets.SPRING_MAIL_USERNAME }}"
             export SPRING_MAIL_PASSWORD="${{ secrets.SPRING_MAIL_PASSWORD }}"
-            export JWT_ACCESS_TOKEN_KEY="${{ secrets.SPRING_JWT_ACCESS_TOKEN_KEY }}"
-            export JWT_REFRESH_TOKEN_KEY="${{ secrets.SPRING_JWT_REFRESH_TOKEN_KEY }}"
+            export JWT_ACCESS_TOKEN_KEY="${{ secrets.JWT_ACCESS_TOKEN_KEY }}"
+            export JWT_REFRESH_TOKEN_KEY="${{ secrets.JWT_REFRESH_TOKEN_KEY }}"
             
             /home/ubuntu/thanks-diary-dev/deploy.sh
             
