@@ -128,8 +128,7 @@ jobs:
             JWT_REFRESH_TOKEN_KEY=$JWT_REFRESH_TOKEN_KEY
             EOF
             
-            /home/ubuntu/thanks-diary-dev
-            ./deploy.sh
+            /home/ubuntu/thanks-diary-dev./deploy.sh
             
             echo "Checking service health..."
             curl -f http://localhost:8080/health || { echo "Health check failed"; exit 1; }
