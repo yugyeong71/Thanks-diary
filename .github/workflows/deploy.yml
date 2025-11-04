@@ -113,20 +113,23 @@ jobs:
           script: |
             aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
             
-            export IMAGE_NAME=$IMAGE_NAME
-            export IMAGE_STORAGE=$IMAGE_STORAGE
-            export BUILD_NUMBER=$BUILD_NUMBER
-            export SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL
-            export SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME
-            export SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD
-            export SPRING_MAIL_HOST=$SPRING_MAIL_HOST
-            export SPRING_MAIL_PORT=$SPRING_MAIL_PORT
-            export SPRING_MAIL_USERNAME=$SPRING_MAIL_USERNAME
-            export SPRING_MAIL_PASSWORD=$SPRING_MAIL_PASSWORD
-            export JWT_ACCESS_TOKEN_KEY=$JWT_ACCESS_TOKEN_KEY
-            export JWT_REFRESH_TOKEN_KEY=$JWT_REFRESH_TOKEN_KEY
+            cat > /home/ubuntu/thanks-diary-dev/.env << EOF
+            IMAGE_NAME=$IMAGE_NAME
+            IMAGE_STORAGE=$IMAGE_STORAGE
+            BUILD_NUMBER=$BUILD_NUMBER
+            SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL
+            SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME
+            SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD
+            SPRING_MAIL_HOST=$SPRING_MAIL_HOST
+            SPRING_MAIL_PORT=$SPRING_MAIL_PORT
+            SPRING_MAIL_USERNAME=$SPRING_MAIL_USERNAME
+            SPRING_MAIL_PASSWORD=$SPRING_MAIL_PASSWORD
+            JWT_ACCESS_TOKEN_KEY=$JWT_ACCESS_TOKEN_KEY
+            JWT_REFRESH_TOKEN_KEY=$JWT_REFRESH_TOKEN_KEY
+            EOF
             
-            /home/ubuntu/thanks-diary-dev/deploy.sh
+            /home/ubuntu/thanks-diary-dev
+            ./deploy.sh
             
             echo "Checking service health..."
             curl -f http://localhost:8080/health || { echo "Health check failed"; exit 1; }
