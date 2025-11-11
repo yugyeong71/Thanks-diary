@@ -31,10 +31,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtTokenUtil {
 
-	@Value("${jwt.accessTokenKey}")
+	@Value("${jwt.access-token-key}")
 	private String accessTokenKey;
 
-	@Value("${jwt.refreshTokenKey}")
+	@Value("${jwt.refresh-token-key}")
 	private String refreshTokenKey;
 
 	private final UserRepository userRepository;
